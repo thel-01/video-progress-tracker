@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
             min-height: 100vh;
             color: #333;
         }
@@ -54,47 +54,49 @@
         .progress-container {
             text-align: center;
             margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .progress-ring-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+            width: 200px;
+            height: 200px;
+        }
+
+        .progress-ring-bg {
+            fill: transparent;
+            stroke: #f1f3f4;
+            stroke-width: 20;
+        }
+
+        .progress-ring-fill {
+            fill: transparent;
+            stroke: url(#progressGradient);
+            stroke-width: 20;
+            stroke-linecap: round;
+            stroke-dasharray: 565.48;
+            stroke-dashoffset: 565.48;
+            transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .percentage {
-            font-size: 4rem;
-            font-weight: 800;
-            color: #667eea;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .progress-bar-container {
-            width: 100%;
-            height: 12px;
-            background: #f1f3f4;
-            border-radius: 6px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 6px;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .progress-bar::after {
-            content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #059669;
+            margin: 0;
         }
 
         .stats {
@@ -114,19 +116,19 @@
         .stat-number {
             font-size: 1.8rem;
             font-weight: 700;
-            color: #667eea;
+            color: #1f2937;
             margin-bottom: 5px;
         }
 
         .stat-label {
             font-size: 0.9rem;
-            color: #666;
+            color: #4b5563;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .toggle-button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #10b981, #059669);
             border: none;
             padding: 15px 30px;
             border-radius: 25px;
@@ -137,12 +139,12 @@
             font-size: 1rem;
             display: block;
             margin: 0 auto 30px;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
 
         .toggle-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
         }
 
         .video-list {
@@ -170,7 +172,7 @@
         }
 
         .clear-all-btn {
-            background: linear-gradient(135deg, #dc3545, #c82333);
+            background: linear-gradient(135deg, #f59e0b, #d97706);
             border: none;
             padding: 10px 20px;
             border-radius: 20px;
@@ -179,20 +181,20 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 0.9rem;
-            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
             margin-left: auto;
         }
 
         .clear-all-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
-            background: linear-gradient(135deg, #c82333, #bd2130);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            background: linear-gradient(135deg, #d97706, #b45309);
         }
 
         .list-title {
             font-size: 1.1rem;
             font-weight: 700;
-            color: #333;
+            color: #1f2937;
             margin: 0;
         }
 
@@ -213,7 +215,7 @@
         }
 
         .video-item.completed {
-            background: linear-gradient(90deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.05), rgba(5, 150, 105, 0.05));
         }
 
         .video-controls {
@@ -235,13 +237,13 @@
         }
 
         .checkbox:hover {
-            border-color: #667eea;
+            border-color: #10b981;
             transform: scale(1.1);
         }
 
         .checkbox.checked {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-color: #667eea;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #10b981;
         }
 
         .checkbox.checked::after {
@@ -271,8 +273,8 @@
         }
 
         .up-to-here-btn:hover {
-            border-color: #667eea;
-            background: #667eea;
+            border-color: #10b981;
+            background: #10b981;
             transform: scale(1.1);
         }
 
@@ -288,8 +290,8 @@
         }
 
         .up-to-here-btn.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-color: #667eea;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #10b981;
         }
 
         .up-to-here-btn.active .arrow {
@@ -305,17 +307,17 @@
 
         .video-title {
             font-weight: 600;
-            color: #333;
+            color: #1f2937;
             font-size: 1rem;
         }
 
         .video-item.completed .video-title {
-            color: #667eea;
+            color: #059669;
         }
 
         .video-duration {
             font-size: 0.9rem;
-            color: #666;
+            color: #4b5563;
             font-weight: 500;
             font-family: 'Monaco', monospace;
         }
@@ -353,15 +355,24 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1 class="title">Statistical Learning</h1>
-            <p class="subtitle">Track your progress through the complete video series</p>
+            <h1 class="title">Introduction to Predictive Analytics<br>and Machine Learning in R</h1>
+            <p class="subtitle">Track your progress through the virtual lecture</p>
         </div>
 
         <div class="progress-section">
             <div class="progress-container">
-                <span class="percentage" id="percentage">0%</span>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                <div class="progress-ring-container">
+                    <svg class="progress-ring">
+                        <defs>
+                            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#10b981"/>
+                                <stop offset="100%" style="stop-color:#059669"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="progress-ring-bg" cx="100" cy="100" r="90"/>
+                        <circle class="progress-ring-fill" id="progressRing" cx="100" cy="100" r="90"/>
+                    </svg>
+                    <span class="percentage" id="percentage">0%</span>
                 </div>
             </div>
 
@@ -686,7 +697,7 @@
 
         // DOM elements
         const percentageEl = document.getElementById('percentage');
-        const progressBarEl = document.getElementById('progressBar');
+        const progressRingEl = document.getElementById('progressRing');
         const completedCountEl = document.getElementById('completedCount');
         const remainingCountEl = document.getElementById('remainingCount');
         const toggleButtonEl = document.getElementById('toggleButton');
@@ -799,8 +810,15 @@
             const percentage = Math.round((completedVideos / totalVideos) * 100);
             const remaining = totalVideos - completedVideos;
             
+            // Update percentage text
             percentageEl.textContent = `${percentage}%`;
-            progressBarEl.style.width = `${percentage}%`;
+            
+            // Update progress ring
+            const circumference = 2 * Math.PI * 90; // 2πr where r=90
+            const offset = circumference - (percentage / 100) * circumference;
+            progressRingEl.style.strokeDashoffset = offset;
+            
+            // Update stats
             completedCountEl.textContent = completedVideos;
             remainingCountEl.textContent = remaining;
         }
@@ -810,26 +828,33 @@
                 completedState: completedState,
                 completedVideos: completedVideos
             };
-            // Store in memory (would use localStorage in a real environment)
-            window.progressData = progressData;
+            // Save to localStorage (browser storage)
+            localStorage.setItem('videoProgressTracker', JSON.stringify(progressData));
         }
 
         function loadProgress() {
-            // Load from memory (would use localStorage in a real environment)
-            const progressData = window.progressData;
-            if (progressData) {
-                completedState = progressData.completedState || new Array(totalVideos).fill(false);
-                completedVideos = progressData.completedVideos || 0;
-                
-                // Apply loaded state to UI
-                completedState.forEach((isCompleted, index) => {
-                    if (isCompleted) {
-                        const videoItem = videoItems[index];
-                        const checkbox = videoItem.querySelector('.checkbox');
-                        videoItem.classList.add('completed');
-                        checkbox.classList.add('checked');
-                    }
-                });
+            // Load from localStorage (browser storage)
+            const savedData = localStorage.getItem('videoProgressTracker');
+            if (savedData) {
+                try {
+                    const progressData = JSON.parse(savedData);
+                    completedState = progressData.completedState || new Array(totalVideos).fill(false);
+                    completedVideos = progressData.completedVideos || 0;
+                    
+                    // Apply loaded state to UI
+                    completedState.forEach((isCompleted, index) => {
+                        if (isCompleted) {
+                            const videoItem = videoItems[index];
+                            const checkbox = videoItem.querySelector('.checkbox');
+                            videoItem.classList.add('completed');
+                            checkbox.classList.add('checked');
+                        }
+                    });
+                } catch (error) {
+                    console.log('Error loading saved progress, starting fresh');
+                    completedState = new Array(totalVideos).fill(false);
+                    completedVideos = 0;
+                }
             }
             updateProgress();
         }
