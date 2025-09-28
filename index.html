@@ -43,6 +43,25 @@
             font-weight: 400;
         }
 
+        .youtube-link {
+            color: rgba(255,255,255,0.95);
+            text-decoration: none;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .youtube-link:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
         .progress-section {
             background: white;
             border-radius: 20px;
@@ -127,39 +146,11 @@
             letter-spacing: 0.5px;
         }
 
-        .toggle-button {
-            background: linear-gradient(135deg, #10b981, #059669);
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            display: block;
-            margin: 0 auto 30px;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        }
-
-        .toggle-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-        }
-
         .video-list {
             background: white;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            transition: all 0.5s ease;
-        }
-
-        .video-list.hidden {
-            opacity: 0;
-            transform: translateY(-20px);
-            max-height: 0;
-            margin-bottom: 0;
         }
 
         .list-header {
@@ -167,8 +158,42 @@
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             border-bottom: 1px solid #f1f3f4;
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .hide-completed-btn {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 10px rgba(107, 114, 128, 0.3);
+        }
+
+        .hide-completed-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.4);
+            background: linear-gradient(135deg, #4b5563, #374151);
+        }
+
+        .hide-completed-btn.active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .hide-completed-btn.active:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
 
         .clear-all-btn {
@@ -198,10 +223,25 @@
             margin: 0;
         }
 
+        .lecture-section {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #1f2937;
+            transition: all 0.3s ease;
+        }
+
+        .lecture-section.completed {
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            color: #059669;
+        }
+
         .video-item {
             display: flex;
             align-items: center;
-            padding: 20px 30px;
+            padding: 15px 30px 15px 50px;
             border-bottom: 1px solid #f1f3f4;
             transition: all 0.3s ease;
         }
@@ -216,6 +256,10 @@
 
         .video-item.completed {
             background: linear-gradient(90deg, rgba(16, 185, 129, 0.05), rgba(5, 150, 105, 0.05));
+        }
+
+        .video-item.hidden {
+            display: none;
         }
 
         .video-controls {
@@ -355,8 +399,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1 class="title">Introduction to Predictive Analytics<br>and Machine Learning in R</h1>
-            <p class="subtitle">Track your progress through the virtual lecture</p>
+            <h1 class="title">Track your progress</h1>
+            <p class="subtitle"><a href="https://www.youtube.com/playlist?list=PLiP3SpUod5Blbuy0UZwjiE8uip2yQaBCz" target="_blank" class="youtube-link">YouTube: 'Big Data & Statistical Learning in R'</a></p>
         </div>
 
         <div class="progress-section">
@@ -378,28 +422,31 @@
 
             <div class="stats">
                 <div class="stat">
-                    <div class="stat-number" id="completedCount">0</div>
+                    <div class="stat-number" id="completedTime">0h</div>
                     <div class="stat-label">Completed</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number" id="remainingCount">24</div>
+                    <div class="stat-number" id="remainingTime">14:05h</div>
                     <div class="stat-label">Remaining</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number" id="totalTime">14:05:50</div>
+                    <div class="stat-number" id="totalTime">14:05h</div>
                     <div class="stat-label">Total Time</div>
                 </div>
             </div>
         </div>
 
-        <button class="toggle-button" id="toggleButton">Show Video List</button>
-
-        <div class="video-list hidden" id="videoList">
+        <div class="video-list" id="videoList">
             <div class="list-header">
                 <h3 class="list-title">Video Progress</h3>
-                <button class="clear-all-btn" id="clearAllBtn">Clear All</button>
+                <div class="header-buttons">
+                    <button class="hide-completed-btn" id="hideCompletedBtn">Hide Completed</button>
+                    <button class="clear-all-btn" id="clearAllBtn">Clear All</button>
+                </div>
             </div>
-            <div class="video-item" data-index="0">
+            
+            <div class="lecture-section" data-lecture="1">Lecture 1</div>
+            <div class="video-item" data-index="0" data-lecture="1">
                 <div class="video-controls">
                     <div class="checkbox" data-index="0"></div>
                     <div class="up-to-here-btn" data-index="0" title="Mark this and all previous as complete">
@@ -407,11 +454,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture1: Part 0 Roadmap</span>
+                    <span class="video-title">Part 0: Roadmap</span>
                     <span class="video-duration">8:22</span>
                 </div>
             </div>
-            <div class="video-item" data-index="1">
+            <div class="video-item" data-index="1" data-lecture="1">
                 <div class="video-controls">
                     <div class="checkbox" data-index="1"></div>
                     <div class="up-to-here-btn" data-index="1" title="Mark this and all previous as complete">
@@ -419,11 +466,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 1: Part 1 Intro to R</span>
+                    <span class="video-title">Part 1: Intro to R</span>
                     <span class="video-duration">38:22</span>
                 </div>
             </div>
-            <div class="video-item" data-index="2">
+            <div class="video-item" data-index="2" data-lecture="1">
                 <div class="video-controls">
                     <div class="checkbox" data-index="2"></div>
                     <div class="up-to-here-btn" data-index="2" title="Mark this and all previous as complete">
@@ -431,11 +478,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 1: Part 2 Using Commands</span>
+                    <span class="video-title">Part 2: Using Commands</span>
                     <span class="video-duration">19:45</span>
                 </div>
             </div>
-            <div class="video-item" data-index="3">
+            <div class="video-item" data-index="3" data-lecture="1">
                 <div class="video-controls">
                     <div class="checkbox" data-index="3"></div>
                     <div class="up-to-here-btn" data-index="3" title="Mark this and all previous as complete">
@@ -443,11 +490,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 1: Part 3 Using Commands (cont'd)</span>
+                    <span class="video-title">Part 3: Using Commands (cont'd)</span>
                     <span class="video-duration">25:39</span>
                 </div>
             </div>
-            <div class="video-item" data-index="4">
+            <div class="video-item" data-index="4" data-lecture="1">
                 <div class="video-controls">
                     <div class="checkbox" data-index="4"></div>
                     <div class="up-to-here-btn" data-index="4" title="Mark this and all previous as complete">
@@ -455,11 +502,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 1: Part 4 Die Simulator</span>
+                    <span class="video-title">Part 4: Die Simulator</span>
                     <span class="video-duration">36:54</span>
                 </div>
             </div>
-            <div class="video-item" data-index="5">
+            <div class="video-item" data-index="5" data-lecture="1">
                 <div class="video-controls">
                     <div class="checkbox" data-index="5"></div>
                     <div class="up-to-here-btn" data-index="5" title="Mark this and all previous as complete">
@@ -467,11 +514,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 1: Part 5 Card Shuffler and Lists</span>
+                    <span class="video-title">Part 5: Card Shuffler and Lists</span>
                     <span class="video-duration">29:08</span>
                 </div>
             </div>
-            <div class="video-item" data-index="6">
+            <div class="video-item" data-index="6" data-lecture="1">
                 <div class="video-controls">
                     <div class="checkbox" data-index="6"></div>
                     <div class="up-to-here-btn" data-index="6" title="Mark this and all previous as complete">
@@ -479,11 +526,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 1: Part 6 Card Shuffler & Data Frames</span>
+                    <span class="video-title">Part 6: Card Shuffler & Data Frames</span>
                     <span class="video-duration">22:42</span>
                 </div>
             </div>
-            <div class="video-item" data-index="7">
+            <div class="video-item" data-index="7" data-lecture="1">
                 <div class="video-controls">
                     <div class="checkbox" data-index="7"></div>
                     <div class="up-to-here-btn" data-index="7" title="Mark this and all previous as complete">
@@ -491,11 +538,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 1: Part 7 Element Extraction</span>
+                    <span class="video-title">Part 7: Element Extraction</span>
                     <span class="video-duration">21:50</span>
                 </div>
             </div>
-            <div class="video-item" data-index="8">
+            <div class="video-item" data-index="8" data-lecture="1">
                 <div class="video-controls">
                     <div class="checkbox" data-index="8"></div>
                     <div class="up-to-here-btn" data-index="8" title="Mark this and all previous as complete">
@@ -503,11 +550,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 1: Part 8 Logical Operators</span>
+                    <span class="video-title">Part 8: Logical Operators</span>
                     <span class="video-duration">33:41</span>
                 </div>
             </div>
-            <div class="video-item" data-index="9">
+            <div class="video-item" data-index="9" data-lecture="1">
                 <div class="video-controls">
                     <div class="checkbox" data-index="9"></div>
                     <div class="up-to-here-btn" data-index="9" title="Mark this and all previous as complete">
@@ -515,11 +562,13 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 1: Part 9 One-arm bandit</span>
+                    <span class="video-title">Part 9: One-arm bandit</span>
                     <span class="video-duration">41:23</span>
                 </div>
             </div>
-            <div class="video-item" data-index="10">
+
+            <div class="lecture-section" data-lecture="2">Lecture 2</div>
+            <div class="video-item" data-index="10" data-lecture="2">
                 <div class="video-controls">
                     <div class="checkbox" data-index="10"></div>
                     <div class="up-to-here-btn" data-index="10" title="Mark this and all previous as complete">
@@ -527,11 +576,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 2: Part 1 Matrix</span>
+                    <span class="video-title">Part 1: Matrix</span>
                     <span class="video-duration">27:07</span>
                 </div>
             </div>
-            <div class="video-item" data-index="11">
+            <div class="video-item" data-index="11" data-lecture="2">
                 <div class="video-controls">
                     <div class="checkbox" data-index="11"></div>
                     <div class="up-to-here-btn" data-index="11" title="Mark this and all previous as complete">
@@ -539,11 +588,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 2: Part 2 Plots</span>
+                    <span class="video-title">Part 2: Plots</span>
                     <span class="video-duration">38:06</span>
                 </div>
             </div>
-            <div class="video-item" data-index="12">
+            <div class="video-item" data-index="12" data-lecture="2">
                 <div class="video-controls">
                     <div class="checkbox" data-index="12"></div>
                     <div class="up-to-here-btn" data-index="12" title="Mark this and all previous as complete">
@@ -551,11 +600,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 2: Part 3 Loops & Monte Carlo Intro</span>
+                    <span class="video-title">Part 3: Loops & Monte Carlo Intro</span>
                     <span class="video-duration">35:30</span>
                 </div>
             </div>
-            <div class="video-item" data-index="13">
+            <div class="video-item" data-index="13" data-lecture="2">
                 <div class="video-controls">
                     <div class="checkbox" data-index="13"></div>
                     <div class="up-to-here-btn" data-index="13" title="Mark this and all previous as complete">
@@ -563,11 +612,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 2: Part 4 Monte Carlo in Mannheim</span>
+                    <span class="video-title">Part 4: Monte Carlo in Mannheim</span>
                     <span class="video-duration">23:26</span>
                 </div>
             </div>
-            <div class="video-item" data-index="14">
+            <div class="video-item" data-index="14" data-lecture="2">
                 <div class="video-controls">
                     <div class="checkbox" data-index="14"></div>
                     <div class="up-to-here-btn" data-index="14" title="Mark this and all previous as complete">
@@ -575,11 +624,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 2: Part 5 Statistical Models</span>
+                    <span class="video-title">Part 5: Statistical Models</span>
                     <span class="video-duration">20:01</span>
                 </div>
             </div>
-            <div class="video-item" data-index="15">
+            <div class="video-item" data-index="15" data-lecture="2">
                 <div class="video-controls">
                     <div class="checkbox" data-index="15"></div>
                     <div class="up-to-here-btn" data-index="15" title="Mark this and all previous as complete">
@@ -587,11 +636,13 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 2: Part 6 Gauss-Markov Theorem</span>
+                    <span class="video-title">Part 6: Gauss-Markov Theorem</span>
                     <span class="video-duration">46:35</span>
                 </div>
             </div>
-            <div class="video-item" data-index="16">
+
+            <div class="lecture-section" data-lecture="3">Lecture 3</div>
+            <div class="video-item" data-index="16" data-lecture="3">
                 <div class="video-controls">
                     <div class="checkbox" data-index="16"></div>
                     <div class="up-to-here-btn" data-index="16" title="Mark this and all previous as complete">
@@ -599,11 +650,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 3: Part 1 Assignment Solution</span>
+                    <span class="video-title">Part 1: Assignment Solution</span>
                     <span class="video-duration">33:17</span>
                 </div>
             </div>
-            <div class="video-item" data-index="17">
+            <div class="video-item" data-index="17" data-lecture="3">
                 <div class="video-controls">
                     <div class="checkbox" data-index="17"></div>
                     <div class="up-to-here-btn" data-index="17" title="Mark this and all previous as complete">
@@ -611,11 +662,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 3: Part 2 Functional Specification</span>
+                    <span class="video-title">Part 2: Functional Specification</span>
                     <span class="video-duration">42:37</span>
                 </div>
             </div>
-            <div class="video-item" data-index="18">
+            <div class="video-item" data-index="18" data-lecture="3">
                 <div class="video-controls">
                     <div class="checkbox" data-index="18"></div>
                     <div class="up-to-here-btn" data-index="18" title="Mark this and all previous as complete">
@@ -623,11 +674,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 3: Part 3 MSE Using Validation Sets</span>
+                    <span class="video-title">Part 3: MSE Using Validation Sets</span>
                     <span class="video-duration">29:44</span>
                 </div>
             </div>
-            <div class="video-item" data-index="19">
+            <div class="video-item" data-index="19" data-lecture="3">
                 <div class="video-controls">
                     <div class="checkbox" data-index="19"></div>
                     <div class="up-to-here-btn" data-index="19" title="Mark this and all previous as complete">
@@ -635,11 +686,13 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 3: Part 4 MSE using Cross Validation</span>
+                    <span class="video-title">Part 4: MSE using Cross Validation</span>
                     <span class="video-duration">47:40</span>
                 </div>
             </div>
-            <div class="video-item" data-index="20">
+
+            <div class="lecture-section" data-lecture="4">Lecture 4</div>
+            <div class="video-item" data-index="20" data-lecture="4">
                 <div class="video-controls">
                     <div class="checkbox" data-index="20"></div>
                     <div class="up-to-here-btn" data-index="20" title="Mark this and all previous as complete">
@@ -647,11 +700,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 4: Part 1 Best Subset Selection</span>
+                    <span class="video-title">Part 1: Best Subset Selection</span>
                     <span class="video-duration">23:48</span>
                 </div>
             </div>
-            <div class="video-item" data-index="21">
+            <div class="video-item" data-index="21" data-lecture="4">
                 <div class="video-controls">
                     <div class="checkbox" data-index="21"></div>
                     <div class="up-to-here-btn" data-index="21" title="Mark this and all previous as complete">
@@ -659,11 +712,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 4: Part 2 Model Selection Methods</span>
+                    <span class="video-title">Part 2: Model Selection Methods</span>
                     <span class="video-duration">42:12</span>
                 </div>
             </div>
-            <div class="video-item" data-index="22">
+            <div class="video-item" data-index="22" data-lecture="4">
                 <div class="video-controls">
                     <div class="checkbox" data-index="22"></div>
                     <div class="up-to-here-btn" data-index="22" title="Mark this and all previous as complete">
@@ -671,11 +724,11 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 4: Part 3 Shrinkage methods</span>
+                    <span class="video-title">Part 3: Shrinkage methods</span>
                     <span class="video-duration">1:19:04</span>
                 </div>
             </div>
-            <div class="video-item" data-index="23">
+            <div class="video-item" data-index="23" data-lecture="4">
                 <div class="video-controls">
                     <div class="checkbox" data-index="23"></div>
                     <div class="up-to-here-btn" data-index="23" title="Mark this and all previous as complete">
@@ -683,7 +736,7 @@
                     </div>
                 </div>
                 <div class="video-info">
-                    <span class="video-title">Lecture 4: Part 4 Tree-based models</span>
+                    <span class="video-title">Part 4: Tree-based models</span>
                     <span class="video-duration">1:18:57</span>
                 </div>
             </div>
@@ -695,28 +748,68 @@
         let completedVideos = 0;
         let completedState = new Array(totalVideos).fill(false);
 
+        // Video durations in seconds
+        const videoDurations = [
+            502, 2302, 1185, 1539, 2214, 1748, 1362, 1310, 2021, 2483, 1627, 2286, 
+            2130, 1406, 1201, 2795, 1997, 2557, 1784, 2860, 1428, 2532, 4744, 4737
+        ];
+
+        function timeToSeconds(timeStr) {
+            const parts = timeStr.split(':');
+            if (parts.length === 2) {
+                return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+            } else if (parts.length === 3) {
+                return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+            }
+            return 0;
+        }
+
+        function secondsToTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            
+            if (hours > 0) {
+                return `${hours}:${minutes.toString().padStart(2, '0')}h`;
+            } else {
+                return `${minutes}m`;
+            }
+        }
+
         // DOM elements
         const percentageEl = document.getElementById('percentage');
         const progressRingEl = document.getElementById('progressRing');
-        const completedCountEl = document.getElementById('completedCount');
-        const remainingCountEl = document.getElementById('remainingCount');
-        const toggleButtonEl = document.getElementById('toggleButton');
+        const completedTimeEl = document.getElementById('completedTime');
+        const remainingTimeEl = document.getElementById('remainingTime');
         const videoListEl = document.getElementById('videoList');
         const clearAllBtnEl = document.getElementById('clearAllBtn');
+        const hideCompletedBtnEl = document.getElementById('hideCompletedBtn');
         const videoItems = document.querySelectorAll('.video-item');
+        const lectureSections = document.querySelectorAll('.lecture-section');
+
+        let hideCompleted = false;
+
+        // Lecture groupings - which videos belong to which lecture
+        const lectureGroups = {
+            1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            2: [10, 11, 12, 13, 14, 15],
+            3: [16, 17, 18, 19],
+            4: [20, 21, 22, 23]
+        };
 
         // Load saved progress
         loadProgress();
 
-        // Toggle video list
-        toggleButtonEl.addEventListener('click', () => {
-            const isHidden = videoListEl.classList.contains('hidden');
-            if (isHidden) {
-                videoListEl.classList.remove('hidden');
-                toggleButtonEl.textContent = 'Hide Video List';
+        // Hide completed toggle
+        hideCompletedBtnEl.addEventListener('click', () => {
+            hideCompleted = !hideCompleted;
+            updateVideoVisibility();
+            
+            if (hideCompleted) {
+                hideCompletedBtnEl.textContent = 'Show All';
+                hideCompletedBtnEl.classList.add('active');
             } else {
-                videoListEl.classList.add('hidden');
-                toggleButtonEl.textContent = 'Show Video List';
+                hideCompletedBtnEl.textContent = 'Hide Completed';
+                hideCompletedBtnEl.classList.remove('active');
             }
         });
 
@@ -748,6 +841,40 @@
             });
         });
 
+        function updateLectureStatus() {
+            // Check each lecture to see if all videos are completed
+            Object.keys(lectureGroups).forEach(lectureNum => {
+                const videoIndices = lectureGroups[lectureNum];
+                const allCompleted = videoIndices.every(index => completedState[index]);
+                
+                const lectureSection = document.querySelector(`.lecture-section[data-lecture="${lectureNum}"]`);
+                if (allCompleted) {
+                    lectureSection.classList.add('completed');
+                } else {
+                    lectureSection.classList.remove('completed');
+                }
+            });
+        }
+
+        function updateVideoVisibility() {
+            videoItems.forEach((item, index) => {
+                if (hideCompleted && completedState[index]) {
+                    item.classList.add('hidden');
+                } else {
+                    item.classList.remove('hidden');
+                }
+            });
+            
+            // Handle lecture section visibility
+            lectureSections.forEach(section => {
+                const lectureNum = parseInt(section.getAttribute('data-lecture'));
+                const videoIndices = lectureGroups[lectureNum];
+                const hasVisibleVideos = videoIndices.some(index => !videoItems[index].classList.contains('hidden'));
+                
+                // Section is always visible, but we could add logic here if needed
+            });
+        }
+
         function clearAllSelections() {
             // Reset all completed states
             for (let i = 0; i < totalVideos; i++) {
@@ -764,6 +891,8 @@
             
             completedVideos = 0;
             updateProgress();
+            updateVideoVisibility();
+            updateLectureStatus();
             saveProgress();
         }
 
@@ -783,6 +912,8 @@
             }
             
             updateProgress();
+            updateVideoVisibility();
+            updateLectureStatus();
             saveProgress();
         }
 
@@ -803,12 +934,24 @@
             }
             
             updateProgress();
+            updateVideoVisibility();
+            updateLectureStatus();
             saveProgress();
         }
 
         function updateProgress() {
             const percentage = Math.round((completedVideos / totalVideos) * 100);
-            const remaining = totalVideos - completedVideos;
+            
+            // Calculate completed and remaining time
+            let completedSeconds = 0;
+            completedState.forEach((isCompleted, index) => {
+                if (isCompleted) {
+                    completedSeconds += videoDurations[index];
+                }
+            });
+            
+            const totalSeconds = videoDurations.reduce((sum, duration) => sum + duration, 0);
+            const remainingSeconds = totalSeconds - completedSeconds;
             
             // Update percentage text
             percentageEl.textContent = `${percentage}%`;
@@ -818,9 +961,9 @@
             const offset = circumference - (percentage / 100) * circumference;
             progressRingEl.style.strokeDashoffset = offset;
             
-            // Update stats
-            completedCountEl.textContent = completedVideos;
-            remainingCountEl.textContent = remaining;
+            // Update time stats
+            completedTimeEl.textContent = secondsToTime(completedSeconds);
+            remainingTimeEl.textContent = secondsToTime(remainingSeconds);
         }
 
         function saveProgress() {
@@ -857,6 +1000,7 @@
                 }
             }
             updateProgress();
+            updateLectureStatus();
         }
     </script>
 </body>
