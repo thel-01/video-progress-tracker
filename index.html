@@ -66,8 +66,8 @@
         }
 
         .progress-section {
-            background: rgba(31, 41, 55, 0.85);
-            backdrop-filter: blur(12px) saturate(120%);
+            background: rgba(31, 41, 55, 0.66);
+            backdrop-filter: blur(8px) saturate(120%);
             border-radius: 28px;
             padding: 30px 40px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
@@ -419,6 +419,13 @@
             font-family: 'Monaco', monospace;
         }
 
+        /* Add keyframes for shimmer effect */
+        @keyframes breathing-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px 10px;
@@ -428,16 +435,6 @@
                 padding: 15px 15px;
                 margin-left: 10px;
                 margin-right: 10px;
-            }
-
-            .progress-section.compact {
-                padding: 12px 15px;
-            }
-
-            .progress-section.compact .stats {
-                max-height: 0;
-                opacity: 0;
-                margin-top: 0;
             }
 
             .title {
@@ -485,8 +482,11 @@
 
             .progress-bar-fill {
                 height: 100%;
-                background: linear-gradient(90deg, #34d399, #10b981);
+                background: linear-gradient(90deg, #34d399, #10b981, #34d399);
+                background-size: 200% 100%;
                 border-radius: 4px;
+                animation: breathing-gradient 3s ease infinite;
+                transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .percentage {
@@ -931,21 +931,6 @@
         const lectureSections = document.querySelectorAll('.lecture-section');
 
         let hideCompleted = false;
-        let lastScrollY = 0;
-
-        // Handle scroll for compact mode (mobile only)
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            const isMobile = window.innerWidth <= 768;
-            
-            if (isMobile && scrollY > 50) {
-                progressSectionEl.classList.add('compact');
-            } else {
-                progressSectionEl.classList.remove('compact');
-            }
-            
-            lastScrollY = scrollY;
-        });
 
         // Update SVG viewBox and circles for mobile
         function updateSVGForMobile() {
