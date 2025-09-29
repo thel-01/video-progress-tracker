@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ML Seminar Progress Tracker</title>
+    <title>Statistical Learning Progress Tracker</title>
     <style>
         * {
             margin: 0;
@@ -85,11 +85,21 @@
             gap: 40px;
         }
 
+        /* Desktop: Show ring, hide bar */
         .progress-ring-container {
             position: relative;
             width: 160px;
             height: 160px;
             flex-shrink: 0;
+            display: block;
+        }
+
+        .progress-bar-container {
+            position: absolute;
+            visibility: hidden;
+            height: 0;
+            overflow: hidden;
+            width: 0;
         }
 
         .progress-ring {
@@ -415,9 +425,19 @@
             }
 
             .progress-section {
-                padding: 20px 15px;
+                padding: 15px 15px;
                 margin-left: 10px;
                 margin-right: 10px;
+            }
+
+            .progress-section.compact {
+                padding: 12px 15px;
+            }
+
+            .progress-section.compact .stats {
+                max-height: 0;
+                opacity: 0;
+                margin-top: 0;
             }
 
             .title {
@@ -426,41 +446,72 @@
 
             .progress-container {
                 flex-direction: column;
-                gap: 20px;
+                gap: 15px;
             }
 
+            /* Hide ring, show bar on mobile */
             .progress-ring-container {
-                width: 120px;
-                height: 120px;
+                position: absolute;
+                visibility: hidden;
+                height: 0;
+                width: 0;
+                overflow: hidden;
             }
 
-            .progress-ring {
-                width: 120px;
-                height: 120px;
+            .progress-bar-container {
+                position: relative;
+                visibility: visible;
+                height: auto;
+                width: 100%;
+                overflow: visible;
             }
 
-            .progress-ring-bg {
-                cx: 60;
-                cy: 60;
-                r: 52;
+            .progress-bar-percentage {
+                display: block;
+                font-size: 2rem;
+                font-weight: 800;
+                color: #34d399;
+                margin-bottom: 8px;
+                text-align: center;
             }
 
-            .progress-ring-fill {
-                cx: 60;
-                cy: 60;
-                r: 52;
-                stroke-dasharray: 326.73;
-                stroke-dashoffset: 326.73;
+            .progress-bar-wrapper {
+                width: 100%;
+                height: 8px;
+                background: #374151;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+
+            .progress-bar-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #34d399, #10b981);
+                border-radius: 4px;
             }
 
             .percentage {
-                font-size: 2.2rem;
+                font-size: 1.8rem;
+                position: static;
+                transform: none;
             }
 
             .stats {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
                 width: 100%;
-                gap: 15px;
+                gap: 10px;
+                margin-top: 15px;
+            }
+
+            .stat {
+                padding: 12px;
+            }
+
+            .stat-number {
+                font-size: 1.3rem;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
             }
 
             .video-list {
@@ -490,7 +541,7 @@
         <div class="progress-section">
             <div class="progress-container">
                 <div class="progress-ring-container">
-                    <svg class="progress-ring">
+                    <svg class="progress-ring" viewBox="0 0 160 160">
                         <defs>
                             <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                                 <stop offset="0%" style="stop-color:#34d399"/>
@@ -501,6 +552,13 @@
                         <circle class="progress-ring-fill" id="progressRing" cx="80" cy="80" r="72"/>
                     </svg>
                     <span class="percentage" id="percentage">0%</span>
+                </div>
+
+                <div class="progress-bar-container">
+                    <span class="progress-bar-percentage" id="percentageBar">0%</span>
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar-fill" id="progressBar"></div>
+                    </div>
                 </div>
 
                 <div class="stats">
@@ -866,10 +924,54 @@
         const clearAllBtnEl = document.getElementById('clearAllBtn');
         const hideCompletedBtnEl = document.getElementById('hideCompletedBtn');
         const headerButtonsEl = document.querySelector('.header-buttons');
+        const progressSectionEl = document.querySelector('.progress-section');
+        const percentageBarEl = document.getElementById('percentageBar');
+        const progressBarEl = document.getElementById('progressBar');
         const videoItems = document.querySelectorAll('.video-item');
         const lectureSections = document.querySelectorAll('.lecture-section');
 
         let hideCompleted = false;
+        let lastScrollY = 0;
+
+        // Handle scroll for compact mode (mobile only)
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile && scrollY > 50) {
+                progressSectionEl.classList.add('compact');
+            } else {
+                progressSectionEl.classList.remove('compact');
+            }
+            
+            lastScrollY = scrollY;
+        });
+
+        // Update SVG viewBox and circles for mobile
+        function updateSVGForMobile() {
+            const isMobile = window.innerWidth <= 768;
+            const svg = document.querySelector('.progress-ring');
+            const bgCircle = document.querySelector('.progress-ring-bg');
+            const fillCircle = document.querySelector('.progress-ring-fill');
+            
+            if (!isMobile) {
+                // Desktop uses ring
+                svg.setAttribute('viewBox', '0 0 160 160');
+                bgCircle.setAttribute('cx', '80');
+                bgCircle.setAttribute('cy', '80');
+                bgCircle.setAttribute('r', '72');
+                bgCircle.setAttribute('stroke-width', '16');
+                fillCircle.setAttribute('cx', '80');
+                fillCircle.setAttribute('cy', '80');
+                fillCircle.setAttribute('r', '72');
+                fillCircle.setAttribute('stroke-width', '16');
+            }
+            // Mobile uses progress bar (CSS handles visibility)
+        }
+
+        // Call on load and resize
+        updateSVGForMobile();
+        window.addEventListener('resize', updateSVGForMobile);
 
         // Lecture groupings - which videos belong to which lecture
         const lectureGroups = {
@@ -884,6 +986,9 @@
         
         // Initialize button visibility
         updateButtonVisibility();
+        
+        // Initialize progress display on load
+        updateProgress();
 
         // Hide completed toggle
         hideCompletedBtnEl.addEventListener('click', () => {
@@ -1037,6 +1142,8 @@
         }
 
         function animateNumber(element, targetValue, isPercentage = false) {
+            if (!element) return; // Safety check
+            
             const currentText = element.textContent;
             const currentValue = isPercentage 
                 ? parseInt(currentText) 
@@ -1102,13 +1209,16 @@
             
             // Animate percentage
             animateNumber(percentageEl, percentage, true);
+            animateNumber(percentageBarEl, percentage, true);
             
-            // Update progress ring
-            const circumference = window.innerWidth <= 768 
-                ? 2 * Math.PI * 52  // Mobile: r=52
-                : 2 * Math.PI * 72; // Desktop: r=72
+            // Update progress ring (desktop)
+            const radius = 72;
+            const circumference = 2 * Math.PI * radius;
             const offset = circumference - (percentage / 100) * circumference;
             progressRingEl.style.strokeDashoffset = offset;
+            
+            // Update progress bar (mobile)
+            progressBarEl.style.width = `${percentage}%`;
             
             // Animate time stats
             animateNumber(completedTimeEl, completedSeconds, false);
