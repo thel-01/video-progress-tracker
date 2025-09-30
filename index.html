@@ -255,13 +255,7 @@
         .header-buttons {
             display: flex;
             gap: 15px;
-            opacity: 1;
             transition: opacity 0.3s ease;
-        }
-
-        .header-buttons.hidden {
-            opacity: 0;
-            pointer-events: none;
         }
 
         .hide-completed-btn {
@@ -277,7 +271,7 @@
             box-shadow: 0 2px 10px rgba(107, 114, 128, 0.3);
         }
 
-        .hide-completed-btn:hover {
+        .hide-completed-btn:hover:not(.disabled) {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(107, 114, 128, 0.4);
             background: linear-gradient(135deg, #4b5563, #374151);
@@ -291,6 +285,13 @@
         .hide-completed-btn.active:hover {
             background: linear-gradient(135deg, #059669, #047857);
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .hide-completed-btn.disabled {
+            background: linear-gradient(135deg, #d1d5db, #9ca3af);
+            cursor: not-allowed;
+            opacity: 0.5;
+            box-shadow: none;
         }
 
         .clear-all-btn {
@@ -307,10 +308,17 @@
             margin-left: auto;
         }
 
-        .clear-all-btn:hover {
+        .clear-all-btn:hover:not(.disabled) {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
             background: linear-gradient(135deg, #d97706, #b45309);
+        }
+
+        .clear-all-btn.disabled {
+            background: linear-gradient(135deg, #d1d5db, #9ca3af);
+            cursor: not-allowed;
+            opacity: 0.5;
+            box-shadow: none;
         }
 
         .list-title {
@@ -1037,6 +1045,8 @@
         // Scroll collapse functionality (mobile and desktop)
         let lastScrollY = 0;
         let manuallyExpanded = false;
+        let scrollTimeout = null;
+        let isCollapsed = false;
         const isMobile = () => window.innerWidth <= 768;
 
         const progressSection = document.querySelector('.progress-section');
@@ -1046,53 +1056,67 @@
         const progressBarContainer = document.querySelector('.progress-bar-container');
         const progressBarPercentage = document.querySelector('.progress-bar-percentage');
 
+        function collapseCard() {
+            if (isCollapsed) return;
+            isCollapsed = true;
+
+            progressSection.classList.add('collapsed');
+            progressContainer.classList.add('collapsed');
+            stats.classList.add('collapsed');
+
+            // Desktop: switch from ring to bar
+            if (!isMobile()) {
+                progressRingContainer.classList.add('collapsed');
+                progressBarContainer.classList.add('show');
+                progressBarPercentage.classList.add('show');
+            }
+        }
+
+        function expandCard() {
+            if (!isCollapsed) return;
+            isCollapsed = false;
+
+            progressSection.classList.remove('collapsed');
+            progressContainer.classList.remove('collapsed');
+            stats.classList.remove('collapsed');
+
+            // Desktop: switch back to ring
+            if (!isMobile()) {
+                progressRingContainer.classList.remove('collapsed');
+                progressBarContainer.classList.remove('show');
+                progressBarPercentage.classList.remove('show');
+            }
+        }
+
         window.addEventListener('scroll', () => {
             if (manuallyExpanded) return;
 
             const currentScrollY = window.scrollY;
-            const threshold = isMobile() ? 50 : 300;
+            const threshold = isMobile() ? 50 : 200;
+            const deadzone = 20; // Pixels of buffer zone to prevent flickering
 
-            if (currentScrollY > threshold) {
-                progressSection.classList.add('collapsed');
-                progressContainer.classList.add('collapsed');
-                stats.classList.add('collapsed');
-
-                // Desktop: switch from ring to bar
-                if (!isMobile()) {
-                    progressRingContainer.classList.add('collapsed');
-                    progressBarContainer.classList.add('show');
-                    progressBarPercentage.classList.add('show');
-                }
-            } else {
-                progressSection.classList.remove('collapsed');
-                progressContainer.classList.remove('collapsed');
-                stats.classList.remove('collapsed');
-
-                // Desktop: switch back to ring
-                if (!isMobile()) {
-                    progressRingContainer.classList.remove('collapsed');
-                    progressBarContainer.classList.remove('show');
-                    progressBarPercentage.classList.remove('show');
-                }
+            // Clear any pending timeout
+            if (scrollTimeout) {
+                clearTimeout(scrollTimeout);
             }
 
-            lastScrollY = currentScrollY;
+            // Debounce the state change
+            scrollTimeout = setTimeout(() => {
+                // Only change state if we're clearly past the threshold + deadzone
+                if (currentScrollY > threshold + deadzone && !isCollapsed) {
+                    collapseCard();
+                } else if (currentScrollY < threshold - deadzone && isCollapsed) {
+                    expandCard();
+                }
+
+                lastScrollY = currentScrollY;
+            }, 50); // 50ms debounce
         });
 
         // Tap/click to expand collapsed card
         progressSection.addEventListener('click', () => {
-            if (progressSection.classList.contains('collapsed')) {
-                progressSection.classList.remove('collapsed');
-                progressContainer.classList.remove('collapsed');
-                stats.classList.remove('collapsed');
-
-                // Desktop: switch back to ring
-                if (!isMobile()) {
-                    progressRingContainer.classList.remove('collapsed');
-                    progressBarContainer.classList.remove('show');
-                    progressBarPercentage.classList.remove('show');
-                }
-
+            if (isCollapsed) {
+                expandCard();
                 manuallyExpanded = true;
 
                 // Reset manuallyExpanded flag on next scroll with tolerance
@@ -1127,9 +1151,11 @@
 
         // Hide completed toggle
         hideCompletedBtnEl.addEventListener('click', () => {
+            if (completedVideos === 0) return; // Don't do anything if disabled
+
             hideCompleted = !hideCompleted;
             updateVideoVisibility();
-            
+
             if (hideCompleted) {
                 hideCompletedBtnEl.textContent = 'Show All';
                 hideCompletedBtnEl.classList.add('active');
@@ -1141,6 +1167,7 @@
 
         // Clear all selections
         clearAllBtnEl.addEventListener('click', () => {
+            if (completedVideos === 0) return; // Don't do anything if disabled
             clearAllSelections();
         });
 
@@ -1184,9 +1211,15 @@
 
         function updateButtonVisibility() {
             if (completedVideos > 0) {
-                headerButtonsEl.classList.remove('hidden');
+                hideCompletedBtnEl.classList.remove('disabled');
+                clearAllBtnEl.classList.remove('disabled');
+                hideCompletedBtnEl.disabled = false;
+                clearAllBtnEl.disabled = false;
             } else {
-                headerButtonsEl.classList.add('hidden');
+                hideCompletedBtnEl.classList.add('disabled');
+                clearAllBtnEl.classList.add('disabled');
+                hideCompletedBtnEl.disabled = true;
+                clearAllBtnEl.disabled = true;
             }
         }
 
